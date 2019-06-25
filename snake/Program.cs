@@ -6,7 +6,8 @@ namespace Snake
     {
         public static void Main()
         {
-            Pixel.Snake();
+            Pixel game = new Pixel(0, 0, System.ConsoleColor.Red);
+            game.Snake();
         }
     }
 }

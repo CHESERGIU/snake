@@ -39,5 +39,24 @@ namespace Snake
 
             return movement;
         }
+
+        public static void Choice(IPixel head, Direction.Movement currentMovement)
+        {
+            switch (currentMovement)
+            {
+                case Direction.Movement.Up:
+                    head.YPosition--;
+                    break;
+                case Direction.Movement.Down:
+                    head.YPosition++;
+                    break;
+                case Direction.Movement.Left:
+                    head.XPosition--;
+                    break;
+                case Direction.Movement.Right:
+                    head.XPosition++;
+                    break;
+            }
+        }
     }
 }

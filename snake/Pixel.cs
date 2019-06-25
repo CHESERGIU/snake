@@ -7,63 +7,61 @@ using static System.Console;
 namespace Snake
 {
     public class Pixel : IPixel
-    {
+    {        
         public Pixel(int xPos, int yPos, ConsoleColor color)
         {
-            XPos = xPos;
-            YPos = yPos;
+            XPosition = xPos;
+            YPosition = yPos;
             ScreenColor = color;
         }
 
-        public int XPos { get; set; }
-        public int YPos { get; set; }
+        public int XPosition { get; set; }
+        public int YPosition { get; set; }
         public ConsoleColor ScreenColor { get; set; }
 
-        public static void Snake()
+        public void Snake()
         {
-            int score = Pixel.Score();
+            var activeGame = new Pixel(0, 0, ConsoleColor.Yellow);
+
+            int score = activeGame.Score();
             SetCursorPosition(WindowWidth / 5, WindowHeight / 2);
             WriteLine($"Game over, Score: {score - 5}");
-            SetCursorPosition(WindowWidth / 5, WindowHeight / 2 + 1);
+            SetCursorPosition(WindowWidth / 5, (WindowHeight / 2) + 1);
             ReadKey();
         }
 
-        public static int Score()
+        public int Score()
         {
             WindowHeight = 32;
             WindowWidth = 64;
 
-            var rand = new Random();
+            var random = new Random();
 
             var score = 10;
 
-            var head = new Pixel(WindowWidth / 2, WindowHeight / 2, ConsoleColor.Magenta);
-            var berry = new Pixel(rand.Next(1, WindowWidth - 2), rand.Next(1, WindowHeight - 2), ConsoleColor.Cyan);
+            IPixel head = new Pixel(WindowWidth / 2, WindowHeight / 2, ConsoleColor.Magenta);
+            IPixel berry = new Pixel(random.Next(1, WindowWidth), random.Next(1, WindowHeight), ConsoleColor.Cyan);
 
-            var body = new List<Pixel>();
+            List<Pixel> body = new List<Pixel>();
 
-            var currentMovement = Direction.Movement.Right;
+            Direction.Movement currentMovement = Direction.Movement.Right;
 
-            var gameover = false;
+            bool gameover = false;
 
             while (true)
             {
                 Clear();
 
-                gameover |= (head.XPos == WindowWidth - 1 || head.XPos == 0 || head.YPos == WindowHeight - 1 || head.YPos == 0);
+                gameover |= (head.XPosition == WindowWidth - 1 || head.XPosition == 0 || head.YPosition == WindowHeight - 1 || head.YPosition == 0);
 
-                DrawBorder();
+                head.DrawBorder();
 
-                if (berry.XPos == head.XPos && berry.YPos == head.YPos)
-                {
-                    score++;
-                    berry = new Pixel(rand.Next(1, WindowWidth - 1), rand.Next(1, WindowHeight - 1), ConsoleColor.Cyan);
-                }
+                EatBerry(random, ref score, head, ref berry);
 
                 for (int i = 0; i < body.Count; i++)
                 {
-                    DrawPixel(body[i]);
-                    gameover |= (body[i].XPos == head.XPos && body[i].YPos == head.YPos);
+                    head.DrawPixel(body[i]);
+                    gameover |= (body[i].XPosition == head.XPosition && body[i].YPosition == head.YPosition);
                 }
 
                 if (gameover)
@@ -71,32 +69,17 @@ namespace Snake
                     break;
                 }
 
-                DrawPixel(head);
-                DrawPixel(berry);
+                head.DrawPixel(head);
+                berry.DrawPixel(berry);
 
-                var sw = Stopwatch.StartNew();
-                while (sw.ElapsedMilliseconds <= 500)
+                var stopWatch = Stopwatch.StartNew();
+                while (stopWatch.ElapsedMilliseconds <= 500)
                 {
                     currentMovement = Direction.ReadMovement(currentMovement);
                 }
 
-                body.Add(new Pixel(head.XPos, head.YPos, ConsoleColor.Green));
-
-                switch (currentMovement)
-                {
-                    case Direction.Movement.Up:
-                        head.YPos--;
-                        break;
-                    case Direction.Movement.Down:
-                        head.YPos++;
-                        break;
-                    case Direction.Movement.Left:
-                        head.XPos--;
-                        break;
-                    case Direction.Movement.Right:
-                        head.XPos++;
-                        break;
-                }
+                body.Add(new Pixel(head.XPosition, head.YPosition, ConsoleColor.Green));
+                Direction.Choice(head, currentMovement);
 
                 if (body.Count > score)
                 {
@@ -107,15 +90,29 @@ namespace Snake
             return score;
         }
 
-        public static void DrawPixel(Pixel pixel)
+        public void EatBerry(Random random, ref int score, IPixel head, ref IPixel berry)
         {
-            SetCursorPosition(pixel.XPos, pixel.YPos);
+            if (berry.XPosition == head.XPosition && berry.YPosition == head.YPosition)
+            {
+                berry.Berry(random, ref score);
+            }
+        }
+
+        public IPixel Berry(Random random, ref int score)
+        {
+            score++;
+            return new Pixel(random.Next(1, WindowWidth - 1), random.Next(1, WindowHeight - 1), ConsoleColor.Cyan);
+        }
+
+        void IPixel.DrawPixel(IPixel pixel)
+        {
+            SetCursorPosition(pixel.XPosition, pixel.YPosition);
             ForegroundColor = pixel.ScreenColor;
             Write("■");
             SetCursorPosition(0, 0);
         }
 
-        public static void DrawBorder()
+        void IPixel.DrawBorder()
         {
             for (int i = 0; i < WindowWidth; i++)
             {
