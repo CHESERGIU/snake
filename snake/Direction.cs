@@ -17,23 +17,20 @@ namespace Snake
         {
             if (KeyAvailable)
             {
-                var key = ReadKey(true).Key;
-
-                if (key == ConsoleKey.UpArrow && movement != Movement.Down)
+                switch (ReadKey(true).Key)
                 {
-                    movement = Movement.Up;
-                }
-                else if (key == ConsoleKey.DownArrow && movement != Movement.Up)
-                {
-                    movement = Movement.Down;
-                }
-                else if (key == ConsoleKey.LeftArrow && movement != Movement.Right)
-                {
-                    movement = Movement.Left;
-                }
-                else if (key == ConsoleKey.RightArrow && movement != Movement.Left)
-                {
-                    movement = Movement.Right;
+                    case ConsoleKey.UpArrow when movement != Movement.Down:
+                        movement = Movement.Up;
+                        break;
+                    case ConsoleKey.DownArrow when movement != Movement.Up:
+                        movement = Movement.Down;
+                        break;
+                    case ConsoleKey.LeftArrow when movement != Movement.Right:
+                        movement = Movement.Left;
+                        break;
+                    case ConsoleKey.RightArrow when movement != Movement.Left:
+                        movement = Movement.Right;
+                        break;
                 }
             }
 

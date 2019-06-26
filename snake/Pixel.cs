@@ -26,20 +26,18 @@ namespace Snake
 
         public ConsoleColor ScreenColor { get; set; }
 
-        public void Snake()
+        void IPixel.DrawPixel(IPixel pixel)
         {
-            int score = 10;
-            bool gameover = false;
-            IPixel head = new Pixel(WindowWidth / 2, WindowHeight / 2, ConsoleColor.Magenta);
-            IPixel berry = new Pixel(Randomly.Next(1, WindowWidth), Randomly.Next(1, WindowHeight), ConsoleColor.Red);
-            head.Play(ref score, ref gameover, head, ref berry);
-            WriteLine($"Game over, Score: {score}");
-            ReadKey();
+            SetCursorPosition(pixel.XPosition, pixel.YPosition);
+            ForegroundColor = pixel.ScreenColor;
+            const string Value = "■";
+            Write(Value);
+            SetCursorPosition(0, 0);
         }
 
         void IPixel.Play(ref int score, ref bool gameover, IPixel head, ref IPixel berry)
         {
-            while (true)
+            do
             {
                 Clear();
                 gameover |= head.XPosition == WindowWidth - 1 || head.XPosition == 0 || head.YPosition == WindowHeight - 1 || head.YPosition == 0;
@@ -58,7 +56,8 @@ namespace Snake
                 head.DrawPixel(head);
                 berry.DrawPixel(berry);
                 const int milliseconds = 500;
-                for (var stopWatch = Stopwatch.StartNew(); stopWatch.ElapsedMilliseconds <= milliseconds;)
+                Stopwatch stopWatch = Stopwatch.StartNew();
+                while (stopWatch.ElapsedMilliseconds <= milliseconds)
                 {
                     currentMovement = Direction.ReadMovement(currentMovement);
                 }
@@ -70,6 +69,7 @@ namespace Snake
                     body.RemoveAt(0);
                 }
             }
+            while (true);
         }
 
         void IPixel.Score(ref int score, IPixel head, ref IPixel berry)
@@ -83,13 +83,15 @@ namespace Snake
             berry = new Pixel(Randomly.Next(1, WindowWidth - 1), Randomly.Next(1, WindowHeight - 1), ConsoleColor.Cyan);
         }
 
-        void IPixel.DrawPixel(IPixel pixel)
+        public void Snake()
         {
-            SetCursorPosition(pixel.XPosition, pixel.YPosition);
-            ForegroundColor = pixel.ScreenColor;
-            const string Value = "■";
-            Write(Value);
-            SetCursorPosition(0, 0);
+            int score = 10;
+            bool gameover = false;
+            IPixel head = new Pixel(WindowWidth / 2, WindowHeight / 2, ConsoleColor.Magenta);
+            IPixel berry = new Pixel(Randomly.Next(1, WindowWidth), Randomly.Next(1, WindowHeight), ConsoleColor.Red);
+            head.Play(ref score, ref gameover, head, ref berry);
+            WriteLine($"Game over, Score: {score}");
+            ReadKey();
         }
     }
 }
