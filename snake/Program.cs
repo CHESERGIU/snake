@@ -1,6 +1,4 @@
-﻿using static System.Console;
-
-namespace Snake
+﻿namespace Snake
 {
     public static class Program
     {

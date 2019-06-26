@@ -45,17 +45,28 @@ namespace Snake
             switch (currentMovement)
             {
                 case Direction.Movement.Up:
-                    head.YPosition--;
-                    break;
+                    {
+                        head.YPosition--;
+                        break;
+                    }
+
                 case Direction.Movement.Down:
-                    head.YPosition++;
-                    break;
+                    {
+                        head.YPosition++;
+                        break;
+                    }
+
                 case Direction.Movement.Left:
-                    head.XPosition--;
-                    break;
+                    {
+                        head.XPosition--;
+                        break;
+                    }
+
                 case Direction.Movement.Right:
-                    head.XPosition++;
-                    break;
+                    {
+                        head.XPosition++;
+                        break;
+                    }
             }
         }
     }
